@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aziza Bakery — ulgurji buyurtma</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --plum:#531F36; --plum-deep:#3B1A2A; --orange:#F79F3D; --orange-hover:#F08F22;
+  --cream:#FBF4EC; --peach:#FCE6D1; --ink:#3D1A2B; --muted:#7A5E6A; --line:#EADDD3; --white:#fff;
+  --serif:"Fraunces", Georgia, "Times New Roman", serif;
+  --sans:"Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --wrap:1240px;
+  --safe-top:calc(env(safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px) + var(--tg-safe-area-inset-top,0px));
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{margin:0;background:var(--cream);color:var(--ink);font:400 16px/1.55 var(--sans);-webkit-font-smoothing:antialiased;padding-top:var(--safe-top)}
+img{max-width:100%;display:block}
+a{color:inherit}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px;border-radius:6px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--serif);font-weight:700;line-height:1.08;margin:0;letter-spacing:-.01em}
+
+/* ---------- top bar + header ---------- */
+.topbar{background:var(--plum-deep);color:#F3E3EA;font-size:13px;display:none}
+.topbar .wrap{display:flex;gap:28px;align-items:center;height:40px}
+.topbar .phone{margin-left:auto;font-weight:800;text-decoration:none;color:#fff}
+.header{background:var(--white);position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line)}
+.header .wrap{display:flex;align-items:center;gap:24px;height:64px}
+.logo img{height:36px;width:auto}
+.nav{display:none;gap:28px;margin:0 auto}
+.nav a{text-decoration:none;font-weight:600;font-size:15px}
+.nav a:hover{color:var(--plum)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:13px 22px;font-weight:800;font-size:15px;cursor:pointer;text-decoration:none;transition:background .15s}
+.btn-orange{background:var(--orange);color:var(--plum-deep)}
+.btn-orange:hover{background:var(--orange-hover)}
+.btn-outline{background:transparent;color:#fff;box-shadow:inset 0 0 0 2px rgba(255,255,255,.85)}
+.btn-outline:hover{background:rgba(255,255,255,.08)}
+.btn-plum{background:var(--plum);color:#fff}
+.btn-plum:hover{background:var(--plum-deep)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.header .btn{margin-left:auto;padding:10px 18px}
+.count{background:var(--plum);color:#fff;border-radius:999px;font-size:12px;padding:1px 8px;min-width:22px}
+.count:empty{display:none}
+
+/* ---------- ticker ---------- */
+.ticker{background:var(--orange);color:var(--plum-deep);overflow:hidden;white-space:nowrap;font-weight:800;font-size:15px}
+.ticker-track{display:inline-flex;gap:28px;padding:9px 0;animation:tick 32s linear infinite}
+.ticker-track span::after{content:"♥";margin-left:28px;font-size:12px}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* ---------- hero ---------- */
+.hero{background:var(--plum);color:#fff;overflow:hidden}
+.hero .wrap{display:grid;gap:28px;padding-top:28px;padding-bottom:40px}
+.tag{display:inline-block;background:rgba(255,255,255,.1);color:var(--orange);font-weight:800;font-size:12.5px;letter-spacing:.04em;padding:6px 14px;border-radius:999px}
+.hero h1{font-size:clamp(40px,7vw,76px);margin:16px 0 14px}
+.hero p{color:#EAD6DF;font-size:17px;max-width:46ch;margin:0 0 24px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px}
+.hero-points{display:flex;flex-wrap:wrap;gap:10px 22px;margin:24px 0 0;padding:0;list-style:none;font-size:14px;font-weight:600;color:#F3E3EA}
+.hero-points li::before{content:"♥";color:var(--orange);margin-right:8px;font-size:12px}
+.mascot{position:relative;width:min(78vw,340px);margin:0 auto;order:-1}
+.mascot img{width:100%;height:auto;filter:drop-shadow(0 18px 40px rgba(0,0,0,.25))}
+.badge{position:absolute;left:-7%;top:72.5%;min-width:54%;white-space:nowrap;min-height:22%;background:#fff;color:var(--ink);border-radius:16px;display:flex;align-items:center;gap:10px;padding:8px 12px;box-shadow:0 10px 30px rgba(40,10,25,.25)}
+.badge i{flex:none;width:30px;height:30px;border-radius:50%;background:var(--orange);display:grid;place-items:center;font-style:normal;color:var(--plum-deep);font-size:14px}
+.badge b{display:block;font-size:clamp(12px,3.4vw,16px);line-height:1.15}
+.badge small{display:block;color:var(--muted);font-size:clamp(10.5px,2.8vw,13px)}
+
+/* ---------- sections ---------- */
+.section{padding:48px 0}
+.section-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px;margin-bottom:22px}
+.section-head h2{font-size:clamp(32px,4.4vw,44px);color:var(--plum)}
+.section-head p{margin:6px 0 0;color:var(--muted)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:7px 16px;font-weight:700;font-size:14px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--plum);border-color:var(--plum);color:#fff}
+
+/* ---------- catalog ---------- */
+.catalog-layout{display:grid;gap:24px}
+.products{display:grid;gap:18px;grid-template-columns:1fr}
+.card{background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 1px 0 var(--line),0 8px 24px rgba(83,31,54,.06);display:flex;flex-direction:column}
+.card[hidden]{display:none}
+.card img{aspect-ratio:738/579;object-fit:cover;width:100%;height:auto}
+.card-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+.ptag{align-self:flex-start;background:var(--peach);color:var(--plum);font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px}
+.card h3{font-size:24px;color:var(--plum)}
+.card .desc{margin:0 0 6px;color:var(--muted);font-size:14.5px}
+.variant{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px dashed var(--line)}
+.v-size{font-weight:800;display:block;white-space:nowrap}
+.v-price{font-size:13.5px;color:var(--muted)}
+.v-price b{color:var(--ink)}
+.stepper{display:flex;align-items:center;background:var(--cream);border-radius:999px;padding:3px;flex:none}
+.stepper button{width:36px;height:36px;border-radius:50%;border:0;background:#fff;font-size:20px;font-weight:700;cursor:pointer;color:var(--plum);box-shadow:0 1px 2px rgba(83,31,54,.12)}
+.stepper button:hover{background:var(--peach)}
+.stepper input{width:62px;text-align:center;border:0;background:transparent;font-weight:800;font-size:16px;-moz-appearance:textfield;appearance:textfield}
+.stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.variant.on .stepper{background:var(--orange)}
+.hint{font-size:13px;color:var(--muted);margin:2px 0 0}
+
+/* ---------- summary ---------- */
+.summary{display:none;background:#fff;border-radius:22px;padding:22px;box-shadow:0 1px 0 var(--line),0 8px 24px rgba(83,31,54,.06);align-self:start;position:sticky;top:84px}
+.summary h3{font-size:24px;color:var(--plum);margin-bottom:10px}
+.lines{list-style:none;margin:0;padding:0;font-size:14.5px}
+.lines li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--line)}
+.lines li span:last-child{font-weight:800;white-space:nowrap}
+.empty{color:var(--muted);font-size:14.5px;margin:0}
+.totals{margin:14px 0 4px;display:grid;gap:4px}
+.totals div{display:flex;justify-content:space-between}
+.totals .big{font-size:18px;font-weight:800}
+.warn{background:var(--peach);color:var(--plum);border-radius:12px;padding:9px 12px;font-size:13.5px;font-weight:700;margin:10px 0 0}
+.warn:empty{display:none}
+.summary .btn{width:100%;margin-top:14px}
+
+/* mobile bottom bar */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--plum);color:#fff;padding:10px 16px calc(10px + var(--safe-bottom));display:flex;align-items:center;gap:12px;box-shadow:0 -8px 24px rgba(40,10,25,.2)}
+.bar .info{flex:1;min-width:0;line-height:1.25}
+.bar .info b{display:block;font-size:16px}
+.bar .info small{color:#EAD6DF;font-size:13px}
+.bar .btn{padding:12px 18px;flex:none}
+body{padding-bottom:calc(84px + var(--safe-bottom))}
+
+/* ---------- steps + contact ---------- */
+.steps-grid{display:grid;gap:22px}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:12px;counter-reset:s}
+.steps li{background:#fff;border-radius:18px;padding:16px 18px 16px 70px;position:relative;counter-increment:s}
+.steps li::before{content:counter(s);position:absolute;left:18px;top:16px;width:36px;height:36px;border-radius:50%;background:var(--plum);color:#fff;display:grid;place-items:center;font-weight:800}
+.steps b{display:block;font-size:17px}
+.steps span{color:var(--muted);font-size:14.5px}
+.contact{background:var(--plum);color:#fff;border-radius:22px;padding:24px}
+.contact h3{font-size:26px;margin-bottom:12px}
+.contact p{margin:6px 0;color:#F3E3EA}
+.contact a.btn{margin-top:14px}
+footer{background:var(--plum-deep);color:#D9C3CD;font-size:13.5px;padding:28px 0}
+footer .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+
+/* ---------- checkout sheet ---------- */
+.sheet{position:fixed;inset:0;z-index:50;background:rgba(40,12,26,.55);display:flex;align-items:flex-end;justify-content:center}
+.sheet[hidden]{display:none}
+.panel{background:var(--cream);width:100%;max-width:600px;max-height:92vh;overflow:auto;border-radius:24px 24px 0 0;padding:22px 20px calc(22px + var(--safe-bottom));animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(24px);opacity:0}}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.panel-head h2{font-size:28px;color:var(--plum)}
+.x{border:0;background:#fff;border-radius:50%;width:38px;height:38px;font-size:20px;cursor:pointer}
+.panel .lines{background:#fff;border-radius:16px;padding:6px 14px;margin-bottom:6px}
+.panel .lines li:last-child{border-bottom:0}
+.form{display:grid;gap:12px;margin-top:16px}
+.field label{display:block;font-weight:700;font-size:14px;margin-bottom:5px}
+.field input,.field textarea{width:100%;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:12px 14px;font-size:16px}
+.field input:focus,.field textarea:focus{border-color:var(--plum);outline:none}
+.field.err input{border-color:#C2410C}
+.field .msg{display:none;color:#B4380B;font-size:13px;margin-top:4px}
+.field.err .msg{display:block}
+.two{display:grid;gap:12px}
+.note{font-size:13.5px;color:var(--muted);margin:4px 0 0}
+.sent{background:#fff;border-radius:16px;padding:14px;margin-top:12px;font-weight:700;color:var(--plum)}
+
+/* ---------- tablet ---------- */
+@media (min-width:600px){
+  .products{grid-template-columns:repeat(2,1fr)}
+  .two{grid-template-columns:1fr 1fr}
+  .panel{border-radius:24px;margin:auto;max-height:88vh}
+  .sheet{align-items:center;padding:20px}
+}
+/* ---------- desktop ---------- */
+@media (min-width:900px){
+  body{padding-bottom:0}
+  .bar{display:none}
+  .topbar{display:block}
+  .nav{display:flex}
+  .header .btn{margin-left:0}
+  .hero .wrap{grid-template-columns:1.1fr .9fr;align-items:center;padding-top:48px;padding-bottom:64px}
+  .mascot{order:0;width:min(100%,440px)}
+  .section{padding:72px 0}
+  .catalog-layout{grid-template-columns:1fr 300px;align-items:start}
+  .summary{display:block}
+  .steps-grid{grid-template-columns:1.2fr .8fr;align-items:start}
+}
+@media (min-width:1180px){
+  .products{grid-template-columns:repeat(3,1fr)}
+  .stepper button{width:32px;height:32px;font-size:18px}
+  .stepper input{width:54px}
+}
+@media (prefers-reduced-motion:reduce){
+  .ticker-track{animation:none}
+  .panel{animation:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap">
+  <span>📍 Urganch</span><span>🕗 Ish vaqti: 8:30–20:00</span><span>📦 Ulgurji buyurtmalar</span>
+  <a class="phone" href="tel:+998991690777">+998 99 169 07 77</a>
+</div></div>
+
+<header class="header"><div class="wrap">
+  <a class="logo" href="#top" aria-label="Aziza Bakery"><img src="img/logo.png" alt="Aziza Bakery" width="384" height="127" onerror="this.onerror=null;this.src=this.getAttribute('src').replace('img/','')"></a>
+  <nav class="nav" aria-label="Bo'limlar">
+    <a href="#katalog">Katalog</a><a href="#qanday">Qanday buyurtma beriladi</a><a href="#manzil">Manzil</a>
+  </nav>
+  <button class="btn btn-orange" type="button" data-open>🛍 Buyurtma <span class="count" id="headCount"></span></button>
+</div></header>
+
+<div class="ticker" aria-hidden="true"><div class="ticker-track" id="ticker"></div></div>
+
+<section class="hero" id="top"><div class="wrap">
+  <div>
+    <span class="tag">AZIZA BAKERY · 2006-YILDAN BERI</span>
+    <h1>Mehr bilan tayyorlangan shirinliklar</h1>
+    <p>Ruletlar va mini tortlar 1 kg va 2 kg qutilarda. Omborlar va do'konlar uchun ulgurji buyurtma: kerakli qutilar sonini tanlang, qolganini menejerimiz kelishadi.</p>
+    <div class="hero-actions">
+      <a class="btn btn-orange" href="#katalog">Qutilarni tanlash</a>
+      <a class="btn btn-outline" href="tel:+998991690777">Qo'ng'iroq qilish</a>
+    </div>
+    <ul class="hero-points"><li>1 kg va 2 kg qutilar</li><li>Ulgurji hajmlar</li><li>O'z sexmizda tayyorlanadi</li></ul>
+  </div>
+  <figure class="mascot" style="margin:0 auto">
+    <img src="img/mascot.png" alt="Aziza — qutidan qarab turgan oshpaz qiz" width="640" height="640" onerror="this.onerror=null;this.src=this.getAttribute('src').replace('img/','')">
+    <div class="badge"><i>♥</i><div><b>Siz izlagan ta'm</b><small>2006-yildan beri</small></div></div>
+  </figure>
+</div></section>
+
+<section class="section" id="katalog"><div class="wrap">
+  <div class="section-head">
+    <div><h2>Katalog</h2><p>Har bir mahsulot uchun 1 kg va 2 kg qutilar sonini kiriting.</p></div>
+    <div class="chips" role="group" aria-label="Saralash">
+      <button class="chip" type="button" data-f="all" aria-pressed="true">Hammasi</button>
+      <button class="chip" type="button" data-f="rulet" aria-pressed="false">Ruletlar</button>
+      <button class="chip" type="button" data-f="mini" aria-pressed="false">Mini tortlar</button>
+    </div>
+  </div>
+  <div class="catalog-layout">
+    <div class="products" id="products"></div>
+    <aside class="summary" aria-label="Buyurtma">
+      <h3>Buyurtmangiz</h3>
+      <div data-summary></div>
+      <button class="btn btn-plum" type="button" data-open data-go>Buyurtma berish</button>
+    </aside>
+  </div>
+</div></section>
+
+<section class="section" id="qanday" style="padding-top:0"><div class="wrap">
+  <div class="section-head"><h2>Qanday buyurtma beriladi?</h2></div>
+  <div class="steps-grid">
+    <ol class="steps">
+      <li><b>Qutilarni tanlang</b><span>Har bir mahsulot uchun 1 kg va 2 kg qutilar sonini kiriting.</span></li>
+      <li><b>Ma'lumotlaringizni yozing</b><span>Firma nomi, telefon va yetkazish manzili.</span></li>
+      <li><b>Menejer tasdiqlaydi</b><span>Buyurtmani tekshirib, narx va yetkazish vaqtini siz bilan kelishadi.</span></li>
+    </ol>
+    <div class="contact" id="manzil">
+      <h3>Bizning manzil</h3>
+      <p>📍 Urganch sh., Cho'lobod MFY, Gulzamon ko'chasi, 77-uy</p>
+      <p>🕗 Ish vaqti: 8:30–20:00</p>
+      <p>📞 +998 99 169 07 77</p>
+      <a class="btn btn-orange" href="tel:+998991690777">Qo'ng'iroq qilish</a>
+    </div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <span>«Mehr bilan tayyorlangan shirinliklar»</span>
+  <span>© 2006–2026 Aziza bakery</span>
+</div></footer>
+
+<div class="bar">
+  <div class="info"><b id="barMain">Qutilar tanlanmagan</b><small id="barSub">Minimal buyurtma: — quti</small></div>
+  <button class="btn btn-orange" type="button" data-open data-go>Davom etish</button>
+</div>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="panel-head"><h2 id="sheetTitle">Buyurtma</h2><button class="x" type="button" id="closeSheet" aria-label="Yopish">✕</button></div>
+    <div data-summary></div>
+    <form class="form" id="orderForm" novalidate>
+      <div class="field" data-req><label for="f-company">Firma yoki ombor nomi *</label><input id="f-company" name="company" maxlength="120" autocomplete="organization"><div class="msg">Firma yoki ombor nomini yozing</div></div>
+      <div class="two">
+        <div class="field"><label for="f-person">Mas'ul shaxs</label><input id="f-person" name="person" maxlength="80" autocomplete="name"></div>
+        <div class="field" data-req><label for="f-phone">Telefon *</label><input id="f-phone" name="phone" type="tel" maxlength="30" value="+998 " autocomplete="tel" inputmode="tel"><div class="msg">Telefon raqamini to'liq yozing</div></div>
+      </div>
+      <div class="field" data-req><label for="f-address">Yetkazish manzili *</label><input id="f-address" name="address" maxlength="200" autocomplete="street-address"><div class="msg">Yetkazish manzilini yozing</div></div>
+      <div class="two">
+        <div class="field"><label for="f-date">Qachonga kerak</label><input id="f-date" name="date" type="date"></div>
+        <div class="field"><label for="f-comment">Izoh</label><input id="f-comment" name="comment" maxlength="300"></div>
+      </div>
+      <button class="btn btn-orange" type="submit" id="sendBtn">Buyurtmani yuborish</button>
+      <p class="note">Buyurtma yuborilgach, menejerimiz narx va yetkazish vaqtini tasdiqlash uchun bog'lanadi.</p>
+      <div class="sent" id="notTg" hidden>Bu sahifa Telegram bot orqali ochilganda buyurtma yuboriladi. Botda «🛒 Buyurtma berish» tugmasini bosing.</div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function(){
+  /* ---------- products (names/images). Prices + minimum come from the bot ---------- */
+  var PRODUCTS = [
+    {id:"shok_rulet", cat:"rulet", tag:"Rulet", name:"Shokoladli rulet", desc:"Shokoladli biskvit, yumshoq krem va olcha", img:"img/shok_rulet.jpg"},
+    {id:"orik_rulet", cat:"rulet", tag:"Rulet", name:"O'rikli rulet", desc:"Oq biskvit, yumshoq krem va o'rik", img:"img/orik_rulet.jpg"},
+    {id:"mini_tort", cat:"mini", tag:"Mini tort", name:"Shokoladli mini tort", desc:"Shokoladli biskvit, oq glazur va shokolad naqshi", img:"img/mini_tort.jpg"}
+  ];
+  var SIZES = [1, 2];          // kg per box
+  var STEP = 10;               // +/- buttons change by this many boxes
+
+  // Settings sent by the bot in the link (?cfg=...). Defaults are used when opened directly.
+  var cfg = {min: 100, prices: {}};
+  try {
+    var raw = new URLSearchParams(location.search).get("cfg");
+    if (raw) {
+      raw = raw.replace(/-/g, "+").replace(/_/g, "/");
+      while (raw.length % 4) raw += "=";
+      var c = JSON.parse(atob(raw));
+      if (typeof c.min === "number") cfg.min = c.min;
+      if (c.prices) cfg.prices = c.prices;
+    }
+  } catch (e) { console.warn("cfg", e); }
+
+  function price(id, size){ var p = cfg.prices[id]; var v = p ? p[size - 1] : null; return (typeof v === "number" && v > 0) ? v : null; }
+  function fmt(n){ return n.toLocaleString("ru-RU").replace(/\u00a0/g, " "); }
+
+  /* ---------- Telegram ---------- */
+  var tg = window.Telegram && window.Telegram.WebApp;
+  var inTG = !!(tg && tg.platform && tg.platform !== "unknown");
+  var DESKTOP = ["tdesktop", "macos", "weba", "webk", "web", "unigram"];
+  if (inTG) {
+    tg.ready(); tg.expand();
+    try { tg.setHeaderColor("#ffffff"); tg.setBackgroundColor("#FBF4EC"); } catch (e) {}
+    document.documentElement.setAttribute("data-platform", tg.platform);
+    // On computers, open full screen so the desktop layout shows.
+    if (DESKTOP.indexOf(tg.platform) !== -1 && tg.isVersionAtLeast && tg.isVersionAtLeast("8.0")) {
+      try { tg.requestFullscreen(); } catch (e) {}
+    }
+  }
+
+  /* ---------- ticker ---------- */
+  var words = ["Ulgurji buyurtmalar", "1 kg va 2 kg qutilar", "2006-yildan beri", "Mehr bilan tayyorlangan", "Siz izlagan ta'm"];
+  var t = document.getElementById("ticker");
+  t.innerHTML = words.concat(words, words, words).map(function(w){ return "<span>" + w + "</span>"; }).join("");
+
+  /* ---------- render products ---------- */
+  var qty = {}; // "id|size" -> boxes
+  var box = document.getElementById("products");
+  box.innerHTML = PRODUCTS.map(function(p){
+    var rows = SIZES.map(function(s){
+      var pr = price(p.id, s);
+      return '<div class="variant" data-k="' + p.id + '|' + s + '">' +
+        '<div><span class="v-size">' + s + ' kg quti</span><span class="v-price">' + (pr ? '<b>' + fmt(pr) + "</b> so'm / quti" : "Narx kelishiladi") + '</span></div>' +
+        '<div class="stepper">' +
+          '<button type="button" data-d="-1" aria-label="' + p.name + ', ' + s + ' kg: ' + STEP + ' ta kamaytirish">−</button>' +
+          '<input type="number" inputmode="numeric" min="0" max="99999" value="0" aria-label="' + p.name + ', ' + s + ' kg qutilar soni">' +
+          '<button type="button" data-d="1" aria-label="' + p.name + ', ' + s + ' kg: ' + STEP + ' ta qo\'shish">+</button>' +
+        '</div></div>';
+    }).join("");
+    return '<article class="card" data-cat="' + p.cat + '">' +
+      '<img src="' + p.img + '" alt="' + p.name + '" loading="lazy" width="738" height="579" onerror="this.onerror=null;this.src=this.getAttribute(\'src\').replace(\'img/\',\'\')">' +
+      '<div class="card-body"><span class="ptag">' + p.tag + '</span><h3>' + p.name + '</h3><p class="desc">' + p.desc + '</p>' + rows + '</div></article>';
+  }).join("");
+
+  function setQty(k, v, row){
+    v = Math.max(0, Math.min(99999, Math.round(Number(v) || 0)));
+    if (v) qty[k] = v; else delete qty[k];
+    row.querySelector("input").value = v;
+    row.classList.toggle("on", v > 0);
+    render();
+  }
+  box.addEventListener("click", function(e){
+    var b = e.target.closest("button[data-d]"); if (!b) return;
+    var row = b.closest(".variant"), k = row.getAttribute("data-k");
+    setQty(k, (qty[k] || 0) + STEP * Number(b.getAttribute("data-d")), row);
+    if (inTG && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+  });
+  box.addEventListener("change", function(e){
+    if (e.target.tagName !== "INPUT") return;
+    var row = e.target.closest(".variant"); setQty(row.getAttribute("data-k"), e.target.value, row);
+  });
+  box.addEventListener("focusin", function(e){ if (e.target.tagName === "INPUT") e.target.select(); });
+
+  /* ---------- filter chips ---------- */
+  document.querySelectorAll(".chip").forEach(function(c){
+    c.addEventListener("click", function(){
+      var f = c.getAttribute("data-f");
+      document.querySelectorAll(".chip").forEach(function(x){ x.setAttribute("aria-pressed", x === c ? "true" : "false"); });
+      document.querySelectorAll(".card").forEach(function(card){ card.hidden = !(f === "all" || card.getAttribute("data-cat") === f); });
+    });
+  });
+
+  /* ---------- totals ---------- */
+  function totals(){
+    var boxes = 0, kg = 0, sum = 0, unknown = false, items = [];
+    PRODUCTS.forEach(function(p){ SIZES.forEach(function(s){
+      var q = qty[p.id + "|" + s]; if (!q) return;
+      var pr = price(p.id, s);
+      boxes += q; kg += q * s;
+      if (pr) sum += pr * q; else unknown = true;
+      items.push({p: p, s: s, q: q});
+    }); });
+    return {boxes: boxes, kg: kg, sum: sum, unknown: unknown, items: items};
+  }
+
+  function render(){
+    var T = totals(), html;
+    if (!T.items.length) {
+      html = '<p class="empty">Hali hech narsa tanlanmagan. Katalogda kerakli qutilar sonini kiriting.</p>';
+    } else {
+      html = '<ul class="lines">' + T.items.map(function(i){
+        return "<li><span>" + i.p.name + ", " + i.s + " kg</span><span>" + fmt(i.q) + " quti</span></li>";
+      }).join("") + "</ul>" +
+      '<div class="totals"><div><span>Jami qutilar</span><b>' + fmt(T.boxes) + '</b></div>' +
+      '<div><span>Jami og\'irlik</span><b>' + fmt(T.kg) + ' kg</b></div>' +
+      '<div class="big"><span>Summa</span><span>' + (T.unknown ? "Kelishiladi" : fmt(T.sum) + " so'm") + '</span></div></div>';
+    }
+    var need = cfg.min - T.boxes;
+    var warn = (T.boxes && need > 0) ? "Minimal buyurtma " + fmt(cfg.min) + " quti. Yana " + fmt(need) + " quti qo'shing." : "";
+    document.querySelectorAll("[data-summary]").forEach(function(el){
+      el.innerHTML = html + '<p class="warn">' + warn + "</p>";
+    });
+    var ok = T.boxes >= cfg.min && T.boxes > 0;
+    document.querySelectorAll("[data-go]").forEach(function(b){ b.disabled = !ok; });
+    document.getElementById("sendBtn").disabled = !ok;
+    document.getElementById("headCount").textContent = T.boxes ? fmt(T.boxes) : "";
+    document.getElementById("barMain").textContent = T.boxes ? fmt(T.boxes) + " quti · " + fmt(T.kg) + " kg" : "Qutilar tanlanmagan";
+    document.getElementById("barSub").textContent = need > 0 ? "Minimal buyurtma: " + fmt(cfg.min) + " quti" : "Buyurtma berishga tayyor";
+  }
+
+  /* ---------- sheet ---------- */
+  var sheet = document.getElementById("sheet");
+  function openSheet(){
+    if (!totals().boxes) { document.getElementById("katalog").scrollIntoView(); return; }
+    sheet.hidden = false; document.body.style.overflow = "hidden";
+    if (inTG && tg.BackButton) { tg.BackButton.show(); }
+    setTimeout(function(){ document.getElementById("f-company").focus(); }, 60);
+  }
+  function closeSheet(){
+    sheet.hidden = true; document.body.style.overflow = "";
+    if (inTG && tg.BackButton) tg.BackButton.hide();
+  }
+  document.querySelectorAll("[data-open]").forEach(function(b){ b.addEventListener("click", openSheet); });
+  document.getElementById("closeSheet").addEventListener("click", closeSheet);
+  sheet.addEventListener("click", function(e){ if (e.target === sheet) closeSheet(); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape" && !sheet.hidden) closeSheet(); });
+  if (inTG && tg.BackButton) tg.BackButton.onClick(closeSheet);
+
+  /* ---------- send ---------- */
+  document.getElementById("orderForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var f = e.target, bad = null;
+    f.querySelectorAll(".field[data-req]").forEach(function(fd){
+      var inp = fd.querySelector("input"), v = inp.value.trim();
+      var wrong = inp.name === "phone" ? v.replace(/\D/g, "").length < 9 : !v;
+      fd.classList.toggle("err", wrong);
+      if (wrong && !bad) bad = inp;
+    });
+    if (bad) { bad.focus(); return; }
+    var T = totals();
+    if (T.boxes < cfg.min) return;
+    var payload = {
+      v: 1,
+      items: T.items.map(function(i){ return {p: i.p.id, s: i.s, q: i.q}; }),
+      company: f.company.value.trim(), person: f.person.value.trim(), phone: f.phone.value.trim(),
+      address: f.address.value.trim(), date: f.date.value, comment: f.comment.value.trim()
+    };
+    if (inTG) {
+      tg.sendData(JSON.stringify(payload)); // closes the app; the bot receives the order
+    } else {
+      document.getElementById("notTg").hidden = false;
+      console.log("Order payload", payload);
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
